@@ -39,41 +39,72 @@ namespace FundooNotes
             services.AddControllers();
             services.AddTransient<IUserRL, UserRL>();
             services.AddTransient<IUserBL, UserBL>();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-           .AddJwtBearer(options =>
-           {
-               options.TokenValidationParameters = new TokenValidationParameters
-               {
-                   ValidateIssuer = true,
-                   ValidateAudience = true,
-                   ValidateLifetime = true,
-                   ValidateIssuerSigningKey = true,
-                   ValidIssuer = Configuration["Jwt:Issuer"],
-                   ValidAudience = Configuration["Jwt:Issuer"],
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-               };
-           });
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Welcome to FundooNote Web API" });
+
+
+                var securitySchema = new OpenApiSecurityScheme
                 {
-                    Version = "v1",
-                    Title = "FundooNotes",
-                    Description = "A simple example for swagger api information",
-                    TermsOfService = new Uri("https://example.com/terms"),
-                    Contact = new OpenApiContact
+                    Description = "Using the Authorization header with the Bearer scheme.",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    Reference = new OpenApiReference
                     {
-                        Name = "Your Name XYZ",
-                        Email = "xyz@gmail.com",
-                        Url = new Uri("https://example.com"),
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = "Use under OpenApiLicense",
-                        Url = new Uri("https://example.com/license"),
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
                     }
-                });
+                };
+
+                c.AddSecurityDefinition("Bearer", securitySchema);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+              { securitySchema, new[] { "Bearer" } }});
+
             });
+
+
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]
+                };
+            });
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo
+            //    {
+            //        Version = "v1",
+            //        Title = "FundooNotes",
+            //        Description = "A simple example for swagger api information",
+            //        TermsOfService = new Uri("https://example.com/terms"),
+            //        Contact = new OpenApiContact
+            //        {
+            //            Name = "Your Name XYZ",
+            //            Email = "xyz@gmail.com",
+            //            Url = new Uri("https://example.com"),
+            //        },
+            //        License = new OpenApiLicense
+            //        {
+            //            Name = "Use under OpenApiLicense",
+            //            Url = new Uri("https://example.com/license"),
+            //        }
+            //    });
+            //});
         }
 
 
@@ -86,25 +117,27 @@ namespace FundooNotes
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Test1 Api v1");
+                });
+
             }
 
-            app.UseHttpsRedirection();
+             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthentication();
 
             app.UseAuthorization();
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-  {
-      c.SwaggerEndpoint("/swagger/v1/swagger.json", "My FundooNotes");
-  });
 
             app.UseEndpoints(endpoints =>
-                    {
-                        endpoints.MapControllers();
-                    });
+            {
+                endpoints.MapControllers();
+            });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JWT TOKEN"));
         }
     }
 }

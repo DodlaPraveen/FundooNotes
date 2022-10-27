@@ -1,8 +1,11 @@
 ﻿using BisinessLayer.Interfaces;
 using CommonLayer.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
+using System.Security.Claims;
 
 namespace FundooNotes.Controllers
 {
@@ -37,6 +40,7 @@ namespace FundooNotes.Controllers
                 return this.BadRequest(new { Success = false, message = ex.Message });
             }
         }
+        //[Authorize]
         [HttpPost("Login")]
         public IActionResult Login(UserLogin userLogin)
         {
@@ -77,6 +81,28 @@ namespace FundooNotes.Controllers
             catch (Exception)
             {
                 throw;
+            }
+        }
+        [Authorize]
+        [HttpPost("Reset")]
+        public IActionResult ResetPassword(string password, string confirmPassword)
+        {
+            try
+            {
+                var email = User.FindFirst(ClaimTypes.Email).Value.ToString();
+                //var email = User.Claims.First(e => e.Type == "Email").Value;
+                if (userBL.ResetPassword(email, password, confirmPassword))
+                {
+                    return this.Ok(new { Success = true, message = "Your password has been changed sucessfully" });
+                }
+                else
+                {
+                    return this.BadRequest(new { Success = false, message = "Unable to reset password.Please try again" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
             }
         }
     }
