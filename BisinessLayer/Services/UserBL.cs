@@ -64,5 +64,16 @@ namespace BisinessLayer.Services
                 throw;
             }
         }
+        public bool ResetPassword(string email, string password, string confirmpassword)
+        {
+            try
+            {
+                return iuserrl.ResetPassword(email, password, confirmpassword);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
