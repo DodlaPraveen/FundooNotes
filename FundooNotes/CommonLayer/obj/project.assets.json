@@ -3726,11 +3726,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\Desktop\\FundooNotes\\CommonLayer\\CommonLayer.csproj",
+      "projectUniqueName": "G:\\CFP\\FundooNotes\\CommonLayer\\CommonLayer.csproj",
       "projectName": "CommonLayer",
-      "projectPath": "C:\\Users\\HP\\Desktop\\FundooNotes\\CommonLayer\\CommonLayer.csproj",
+      "projectPath": "G:\\CFP\\FundooNotes\\CommonLayer\\CommonLayer.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\Desktop\\FundooNotes\\CommonLayer\\obj\\",
+      "outputPath": "G:\\CFP\\FundooNotes\\CommonLayer\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
